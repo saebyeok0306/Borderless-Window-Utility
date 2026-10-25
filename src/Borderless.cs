@@ -8,7 +8,7 @@ namespace BorderlessWindowUtility
 {
     internal static class Paths
     {
-        // Same folder as the Python version, so profiles and settings carry over
+        // Kept in AppData so profiles and settings survive moving or updating the .exe
         public static readonly string DataDir = Path.Combine(
             Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BorderlessWindowUtility");
         public static readonly string ProfileFile = Path.Combine(DataDir, "profiles.ini");

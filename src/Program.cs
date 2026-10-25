@@ -33,15 +33,13 @@ namespace BorderlessWindowUtility
                 return 0;
             }
 
-            // Shared with the Python version, so only one of them runs at a time
+            // Only one copy runs at a time
             using (var mutex = new Mutex(false, @"Local\" + Startup.AppName + "Watcher", out bool created))
             {
                 if (!created)
                 {
                     // Already running: open its window list instead of starting a second copy
                     IntPtr tray = Native.FindWindow(null, TrayApp.WindowTitle);
-                    if (tray == IntPtr.Zero)
-                        tray = Native.FindWindow(TrayApp.WindowTitle, null);  // the Python version's tray window class
                     if (tray != IntPtr.Zero)
                     {
                         Native.AllowSetForegroundWindow(Native.ASFW_ANY);

@@ -7,8 +7,8 @@ using System.Text;
 namespace BorderlessWindowUtility
 {
     /// <summary>
-    /// Reads .ini files the way the Python version's configparser does: case-sensitive section names,
-    /// case-insensitive keys, "=" or ":" separators, and ";" / "#" comments (inline ones need a space before them).
+    /// Reads .ini files with case-sensitive section names, case-insensitive keys, "=" or ":" separators,
+    /// and ";" / "#" comments (inline ones need a space before them).
     /// </summary>
     internal sealed class IniFile
     {
