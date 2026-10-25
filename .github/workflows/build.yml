@@ -1,0 +1,63 @@
+# Builds BorderlessWindowUtility.exe on every push and pull request to main.
+# Pushing a tag like v1.2.3 also publishes a GitHub Release with the .exe attached.
+name: Build
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build
+        shell: pwsh
+        run: |
+          # The commit is added to the product version (e.g. 1.0.0+3f2a1b...), and a v1.2.3 tag sets the version
+          $props = @("-p:SourceRevisionId=$env:GITHUB_SHA")
+          if ($env:GITHUB_REF_TYPE -eq 'tag') {
+            $props += "-p:Version=$($env:GITHUB_REF_NAME.TrimStart('v'))"
+          }
+          dotnet publish BorderlessWindowUtility.csproj -c Release -o dist @props
+          if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+          (Get-Item dist/BorderlessWindowUtility.exe).VersionInfo | Format-List FileVersion, ProductVersion
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: BorderlessWindowUtility
+          path: dist/BorderlessWindowUtility.exe
+          if-no-files-found: error
+
+  release:
+    if: github.ref_type == 'tag'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: BorderlessWindowUtility
+
+      - name: Publish release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          flags=()
+          # Tags like v1.2.0-beta.1 are published as pre-releases
+          if [[ "$GITHUB_REF_NAME" == *-* ]]; then flags+=(--prerelease); fi
+          gh release create "$GITHUB_REF_NAME" BorderlessWindowUtility.exe \
+            --repo "$GITHUB_REPOSITORY" --title "$GITHUB_REF_NAME" --generate-notes "${flags[@]}"

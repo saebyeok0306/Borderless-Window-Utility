@@ -1,0 +1,35 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <!-- .NET Framework 4.8 ships with Windows 10 (1903+) and 11, so the .exe runs without installing anything -->
+    <TargetFramework>net48</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <AssemblyName>BorderlessWindowUtility</AssemblyName>
+    <RootNamespace>BorderlessWindowUtility</RootNamespace>
+    <ApplicationIcon>icon.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <Prefer32Bit>false</Prefer32Bit>
+    <DebugType Condition="'$(Configuration)' == 'Release'">none</DebugType>
+    <!-- No .exe.config next to the .exe: Windows 10/11 already run it on .NET Framework 4.8 -->
+    <GenerateSupportedRuntime>false</GenerateSupportedRuntime>
+
+    <Version>1.0.0</Version>
+    <Product>Borderless Window Utility</Product>
+    <AssemblyTitle>Borderless Window Utility</AssemblyTitle>
+    <Description>Makes game windows borderless and centers them automatically.</Description>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Drawing" />
+    <EmbeddedResource Include="icon.ico" LogicalName="icon.ico" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Lets the .NET SDK build for .NET Framework without the Visual Studio targeting pack -->
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+  </ItemGroup>
+
+</Project>
